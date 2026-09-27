@@ -1,0 +1,56 @@
+spring:
+  application:
+    name: ${SPRING_APPLICATION_NAME:vietnamese-provinces-sevice}
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  liquibase:
+    enabled: ${SPRING_LIQUIBASE_ENABLED:false}
+    change-log: ${SPRING_LIQUIBASE_CHANGELOG:classpath}
+    contexts: ${SPRING_LIQUIBASE_CONTEXTS}
+    default-schema: public
+
+  jpa:
+    # Validate schema chỉ để kiểm tra, không tự động tạo/sửa
+    hibernate:
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO}
+    show-sql: ${SPRING_JPA_SHOW_SQL:true}
+    properties:
+      hibernate:
+        "[format_sql]": ${SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL}
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+server:
+  port: ${SERVER_PORT:8080}
+
+# Logging configuration (tùy chọn)
+logging:
+  level:
+    root: ${LOG_ROOT_LEVEL:info} # TRACE = log tất cả; đổi env LOG_ROOT_LEVEL=INFO khi sang prod
+    org:
+      springframework:
+        web: TRACE
+      hibernate: TRACE
+  loki:
+    url: ${LOKI_URL:http://localhost:0}
+    tenant-id: ${LOKI_TENANT_ID:test}
+
+# Default response page and size
+responses:
+  min-page: 0
+  min-size: 1
+  max-size: 100
+
+# Springdoc
+# swagger-ui custom path
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: ${SPRINGDOC_ENABLED:false}
+  api-docs:
+    enabled: ${SPRINGDOC_ENABLED:false}
+  show-actuator: ${SHOW_ACTUATOR:false}

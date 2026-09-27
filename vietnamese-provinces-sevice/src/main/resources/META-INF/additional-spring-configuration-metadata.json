@@ -1,0 +1,29 @@
+{
+  "properties": [
+    {
+      "name": "logging.loki.url",
+      "type": "java.lang.String",
+      "description": "A description for 'logging.loki.url'"
+    },
+    {
+      "name": "logging.loki.tenant-id",
+      "type": "java.lang.String",
+      "description": "A description for 'logging.loki.tenant-id'"
+    },
+    {
+      "name": "responses.min-page",
+      "type": "java.lang.String",
+      "description": "A description for 'response.min-page'"
+    },
+    {
+      "name": "responses.min-size",
+      "type": "java.lang.String",
+      "description": "A description for 'responses.min-size'"
+    },
+    {
+      "name": "responses.max-size",
+      "type": "java.lang.String",
+      "description": "A description for 'responses.max-size'"
+    }
+  ]
+}

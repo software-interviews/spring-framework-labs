@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+  <!-- Bỏ comment khi cần debug chính logback (biến undefined, lỗi appender...) -->
+  <!-- <statusListener class="ch.qos.logback.core.status.OnConsoleStatusListener"/> -->
+
+  <!-- ============================================================
+         CẦU NỐI: Spring Environment -> Logback context
+         ============================================================ -->
+  <springProperty scope="context" name="APP_NAME"
+    source="spring.application.name"
+    defaultValue="vietnamese-provinces-sevice" />
+
+  <springProperty scope="context" name="LOKI_URL"
+    source="logging.loki.url"
+    defaultValue="http://localhost:3100" />
+
+  <springProperty scope="context" name="LOKI_TENANT"
+    source="logging.loki.tenant-id"
+    defaultValue="vietnamese-provinces-sevice" />
+
+  <springProperty scope="context" name="LOKI_PUSH_PATH"
+    source="logging.loki.push-path"
+    defaultValue="/loki/api/v1/push" />
+
+  <!-- Mức log gốc: mặc định TRACE = log TẤT CẢ mọi thứ.
+         Đổi qua env LOG_ROOT_LEVEL hoặc yaml, không cần sửa file này. -->
+  <springProperty scope="context" name="ROOT_LEVEL"
+    source="logging.level.root"
+    defaultValue="TRACE" />
+
+  <!-- ============================================================
+         Console
+         ============================================================ -->
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <!-- Tuỳ chọn: console chỉ từ INFO trở lên cho đỡ loạn màn hình,
+             trong khi Loki vẫn nhận đủ 100% log TRACE. Bỏ comment nếu cần.
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        -->
+    <encoder>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <!-- ============================================================
+         Loki: nhận TOÀN BỘ log kể cả TRACE
+         ============================================================ -->
+  <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
+    <http>
+      <url>${LOKI_URL}${LOKI_PUSH_PATH}</url>
+      <tenantId>${LOKI_TENANT}</tenantId>
+    </http>
+
+    <format>
+      <label>
+        <!-- label level giúp filter lỗi nhanh trên Grafana -->
+        <pattern>app=${APP_NAME},host=${HOSTNAME:-localhost},level=%level</pattern>
+        <readMarkers>true</readMarkers>
+      </label>
+      <message>
+        <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+      </message>
+    </format>
+  </appender>
+
+  <!-- ============================================================
+         ROOT: log tất cả (TRACE). Mọi logger con thừa hưởng mức này,
+         nên không cần khai báo riêng từng package như trước nữa.
+         ============================================================ -->
+  <root level="${ROOT_LEVEL}">
+    <appender-ref ref="CONSOLE" />
+    <appender-ref ref="LOKI" />
+  </root>
+
+  <!-- Khi nào thấy quá ồn (thường là prod), hạ ngưỡng thư viện ồn ào
+         mà vẫn giữ app của anh ở TRACE:
+    <springProfile name="prod">
+        <logger name="org.apache" level="INFO"/>
+        <logger name="io.netty" level="INFO"/>
+        <logger name="org.hibernate.orm.jdbc.bind" level="DEBUG"/>
+    </springProfile>
+    -->
+
+</configuration>

@@ -1,0 +1,84 @@
+{
+  "properties": [
+    {
+      "name": "logging.loki.url",
+      "type": "java.lang.String",
+      "description": "A description for 'logging.loki.url'"
+    },
+    {
+      "name": "logging.loki.tenant-id",
+      "type": "java.lang.String",
+      "description": "A description for 'logging.loki.tenant-id'"
+    },
+    {
+      "name": "responses.min-page",
+      "type": "java.lang.String",
+      "description": "A description for 'response.min-page'"
+    },
+    {
+      "name": "responses.min-size",
+      "type": "java.lang.String",
+      "description": "A description for 'responses.min-size'"
+    },
+    {
+      "name": "responses.max-size",
+      "type": "java.lang.String",
+      "description": "A description for 'responses.max-size'"
+    },
+    {
+      "name": "partition.maintenance.enabled",
+      "type": "java.lang.String",
+      "description": "A description for 'partition.maintenance.enabled'"
+    },
+    {
+      "name": "partition.maintenance.cron",
+      "type": "java.lang.String",
+      "description": "A description for 'partition.maintenance.cron'"
+    },
+    {
+      "name": "partition.maintenance.num-intervals",
+      "type": "java.lang.String",
+      "description": "A description for 'partition.maintenance.num-intervals'"
+    },
+    {
+      "name": "partition.maintenance.tables",
+      "type": "java.lang.String",
+      "description": "A description for 'partition.maintenance.tables'"
+    },
+    {
+      "name": "partition.maintenance.expose-endpoint",
+      "type": "java.lang.String",
+      "description": "A description for 'partition.maintenance.expose-endpoint'"
+    },
+    {
+      "name": "partition.maintenance.cron-job.partition",
+      "type": "java.lang.String",
+      "description": "A description for 'partition.maintenance.cron-job.partition'"
+    },
+    {
+      "name": "app.province.api-url",
+      "type": "java.lang.String",
+      "description": "A description for 'app.province.api-url'"
+    },
+    {
+      "name": "app.seeder-batch.size",
+      "type": "java.lang.String",
+      "description": "A description for 'app.seeder-batch.size'"
+    },
+    {
+      "name": "app.seeder-batch.enabled",
+      "type": "java.lang.String",
+      "description": "A description for 'app.seeder-batch.enabled'"
+    },
+    {
+      "name": "loki.url",
+      "type": "java.lang.String",
+      "description": "A description for 'loki.url'"
+    },
+    {
+      "name": "loki.tenant-id",
+      "type": "java.lang.String",
+      "description": "A description for 'loki.tenant-id'"
+    }
+  ]
+}

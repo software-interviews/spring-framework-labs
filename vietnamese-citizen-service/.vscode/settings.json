@@ -1,0 +1,35 @@
+{
+  // ===== Formatting & Editor (giữ nguyên theo bản gốc) =====
+  "editor.insertSpaces": true,
+  "editor.tabSize": 2,
+  "editor.detectIndentation": false,
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "editor.formatOnType": false,
+  "editor.rulers": [
+    120
+  ],
+  "editor.wordWrap": "off",
+  "editor.wordWrapColumn": 120,
+  // ===== AUTO IMPORT / AUTO REMOVE UNUSED IMPORTS KHI SAVE =====
+  // "always": chạy cả khi bật auto-save | "explicit": chỉ chạy khi Save thủ công (Ctrl+S)
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "always"
+  },
+  // KHÔNG bao giờ gộp nhiều import thành wildcard (import java.util.*)
+  "java.sources.organizeImports.starThreshold": 99,
+  "java.sources.organizeImports.staticStarThreshold": 99,
+  // Thứ tự nhóm import khi được tổ chức: java -> javax -> org -> com -> còn lại
+  "java.completion.importOrder": [
+    "java",
+    "javax",
+    "org",
+    "com",
+    ""
+  ],
+  // ===== Java & PlantUML (giữ nguyên) =====
+  "java.configuration.updateBuildConfiguration": "automatic",
+  "plantuml.render": "PlantUMLServer",
+  "plantuml.server": "https://www.plantuml.com/plantuml",
+  "java.compile.nullAnalysis.mode": "automatic"
+}

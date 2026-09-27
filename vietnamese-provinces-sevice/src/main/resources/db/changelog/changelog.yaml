@@ -1,0 +1,21 @@
+databaseChangeLog:
+  - changeSet:
+      id: "01_db_init"
+      author: "richard"
+      comment: "Initialize database schema - create base tables and constraints"
+      changes:
+        - sqlFile:
+            path: db/changelog/01_db_init.sql
+      # relativeToChangelogFile: false   # mac dinh da la false, bo cung duoc
+      # context: "dev"                   # chi dien khi muon gioi han moi truong
+      # labels: "init"                   # chi dien khi dung label de loc
+      # ignore: false                    # true = tam bo qua include nay
+      # created: "2025-06-01 10:00+07:00"  # chi la ghi chu ngay thang
+
+  - changeSet:
+      id: "02_insert_data"
+      comment: "Initial data"
+      author: "richard"
+      changes:
+        - sqlFile:
+            path: db/changelog/02_insert_data.sql

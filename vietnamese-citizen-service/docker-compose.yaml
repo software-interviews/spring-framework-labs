@@ -1,0 +1,13 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: vietnamese-citizen-service
+    ports:
+      - "8083:8083"
+    env_file:
+      - .env.example
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped

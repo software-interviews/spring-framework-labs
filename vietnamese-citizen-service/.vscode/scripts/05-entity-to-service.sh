@@ -1,0 +1,157 @@
+#!/usr/bin/env bash
+# =====================================================================
+#  05-entity-to-service.sh
+# ---------------------------------------------------------------------
+#  MỤC ĐÍCH:
+#    Đọc một file Java JPA Entity, tự động sinh file Java Service
+#    interface tương ứng.
+#
+#  CÁCH DÙNG (KHÔNG truyền argument):
+#    ./05-entity-to-service.sh
+#    Script sẽ HỎI LẦN LƯỢT khi chạy:
+#      1) Đường dẫn tuyệt đối của file Java Entity đầu vào
+#      2) Đường dẫn tuyệt đối của thư mục Service đầu ra
+#
+#  PACKAGE:
+#    KHÔNG hỏi package riêng. Package được SUY RA TỪ THƯ MỤC ĐẦU RA:
+#      /xxx/src/main/java/org/software/open/source/.../service
+#      -> org.software.open.source...service
+#    Nếu đường dẫn không chứa /src/main/java/ thì mới hỏi package thủ công.
+#
+#  QUY TẮC SINH:
+#    - Tên interface: Bỏ "Entity" ở cuối (nếu có) và thêm "Service".
+#      VD: BookEntity.java -> BookService.java
+#          UserEntity.java -> UserService.java
+#    - Interface rỗng, KHÔNG có method nào.
+#
+#  CHỐNG GHI ĐÈ:
+#    Mặc định không ghi đè file đã tồn tại.
+#    Ghi đè: FORCE=1 ./05-entity-to-service.sh
+# =====================================================================
+set -euo pipefail
+
+# =====================================================================
+# 1. BIẾN CẤU HÌNH (ĐỔI TẠI ĐÂY NẾU CẦN)
+# =====================================================================
+# Package dự phòng, chỉ dùng khi đường dẫn không suy ra được package
+DEFAULT_PACKAGE="org.software.open.source.audio.service"
+
+# =====================================================================
+# 2. HỎI ĐƯỜNG DẪN KHI CHẠY
+# =====================================================================
+echo "=================================================="
+echo "  JAVA ENTITY -> SERVICE INTERFACE GENERATOR"
+echo "=================================================="
+
+# ---- 2.1. Hỏi file Entity đầu vào (hỏi lại tới khi hợp lệ) ----
+IN_FILE=""
+while [ ! -f "${IN_FILE}" ]; do
+    read -r -p "Nhap duong dan tuyet doi cua file Java Entity dau vao: " IN_FILE
+    if [ ! -f "${IN_FILE}" ]; then
+        echo "  !! File khong ton tai: ${IN_FILE}"
+    fi
+done
+
+# ---- 2.2. Hỏi thư mục Service đầu ra ----
+OUT_DIR=""
+while [ -z "${OUT_DIR}" ]; do
+    read -r -p "Nhap duong dan tuyet doi thu muc Service dau ra: " OUT_DIR
+    if [ -z "${OUT_DIR}" ]; then
+        echo "  !! Duong dan khong duoc de trong"
+    fi
+done
+
+# Bỏ slash cuối rồi tạo thư mục nếu chưa có
+OUT_DIR="${OUT_DIR%/}"
+mkdir -p "${OUT_DIR}"
+
+# =====================================================================
+# 3. SUY RA PACKAGE TỪ CHÍNH THƯ MỤC ĐẦU RA
+#    /.../src/main/java/org/software/.../service
+#    -> org.software...service
+# =====================================================================
+PACKAGE=""
+if [[ "${OUT_DIR}" == *"/src/main/java/"* ]]; then
+    PACKAGE="${OUT_DIR#*/src/main/java/}"
+    PACKAGE="${PACKAGE//\//.}"
+fi
+
+if [ -z "${PACKAGE}" ]; then
+    echo "Khong suy duoc package tu duong dan (thieu /src/main/java/)."
+    read -r -p "Nhap package thu cong (Enter = ${DEFAULT_PACKAGE}): " PACKAGE
+    PACKAGE="${PACKAGE:-$DEFAULT_PACKAGE}"
+fi
+
+echo "Package su dung: ${PACKAGE}"
+
+# =====================================================================
+# 4. HÀM TIỆN ÍCH
+# =====================================================================
+trim() {
+    local s="$1"
+    s="${s#"${s%%[![:space:]]*}"}"
+    s="${s%"${s##*[![:space:]]}"}"
+    printf '%s' "${s}"
+}
+
+# Hàm ghi file (chống ghi đè)
+write_file() {
+    local path="$1"
+    if [ -e "${path}" ] && [ "${FORCE:-0}" != "1" ]; then
+        echo "  SKIP (da ton tai): ${path}"
+        return
+    fi
+    cat > "${path}"
+    echo "  CREATED: ${path}"
+}
+
+# Hàm chuẩn hóa tên: Entity -> Service
+to_service_name() {
+    local name="$1"
+    if [[ "$name" == *Entity ]]; then
+        echo "${name%Entity}Service"
+    else
+        echo "${name}Service"
+    fi
+}
+
+# =====================================================================
+# 5. PARSE THÔNG TIN TỪ FILE ENTITY
+# =====================================================================
+echo "Dang phan tich file: ${IN_FILE}"
+
+# Lấy tên class Entity
+CLASS_LINE=$(grep -E 'public\s+(abstract\s+)?class\s+' "${IN_FILE}" | head -1 || true)
+ORIG_CLASS=""
+if [[ "${CLASS_LINE}" =~ public[[:space:]]+(abstract[[:space:]]+)?class[[:space:]]+([A-Za-z0-9_]+) ]]; then
+    ORIG_CLASS="${BASH_REMATCH[2]}"
+else
+    echo "!! Khong tim thay dinh nghia class hop le trong file."
+    exit 1
+fi
+
+# Xác định tên Service
+SERVICE_CLASS=$(to_service_name "${ORIG_CLASS}")
+SERVICE_FILE="${OUT_DIR}/${SERVICE_CLASS}.java"
+
+# =====================================================================
+# 6. SINH FILE SERVICE INTERFACE
+# =====================================================================
+echo "Dang sinh file: ${SERVICE_FILE}"
+
+write_file "${SERVICE_FILE}" <<EOF
+package ${PACKAGE};
+
+/**
+ * Service interface for ${ORIG_CLASS}
+ * Generated by 05-entity-to-service.sh
+ */
+public interface ${SERVICE_CLASS} {
+}
+EOF
+
+echo "=================================================="
+echo "HOAN TAT: Sinh Service interface tu ${IN_FILE}"
+echo "Thu muc dau ra : ${OUT_DIR}"
+echo "File dau ra    : ${SERVICE_FILE}"
+echo "=================================================="
